@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>PNIX Admin — SEO &amp; Tracking</title>
+<meta name="robots" content="noindex,nofollow" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#F4F7F9; font-family:Inter,system-ui,-apple-system,sans-serif; color:#0A1620; -webkit-font-smoothing:antialiased; }
+  input, textarea, button { font-family:inherit; }
+  a { color:#0089B8; }
+  a:hover { color:#00679A; }
+  @keyframes adminIn { 0% { opacity:0; transform:translateY(10px); } 100% { opacity:1; transform:none; } }
+  @keyframes adminShake { 0%,100% { transform:translateX(0); } 20% { transform:translateX(-6px); } 40% { transform:translateX(6px); } 60% { transform:translateX(-4px); } 80% { transform:translateX(4px); } }
+  @keyframes adminToast { 0% { opacity:0; transform:translateY(12px); } 12% { opacity:1; transform:none; } 85% { opacity:1; transform:none; } 100% { opacity:0; transform:translateY(-6px); } }
+</style>
+</helmet>
+
+<sc-if value="{{ locked }}" hint-placeholder-val="{{ true }}">
+  <div style="min-height:100dvh;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(180deg,#F4F7F9,#E7EEF2)">
+    <div style="width:100%;max-width:380px;background:#FFFFFF;border:1px solid rgba(10,22,32,.09);border-radius:20px;padding:30px 26px 26px;box-shadow:0 1px 2px rgba(6,16,22,.06),0 18px 44px rgba(6,16,22,.12);animation:{{ loginAnim }}">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:22px">
+        <img src="pnix-logo.png" alt="PNIX" style="width:30px;height:30px;border-radius:7px;display:block" />
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <span style="font-size:18px;font-weight:700;letter-spacing:-.02em;line-height:1.05">PNIX</span>
+          <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8A98A2">Admin</span>
+        </div>
+      </div>
+
+      <h1 style="margin:0 0 4px;font-size:21px;font-weight:700;letter-spacing:-.02em">Sign in</h1>
+      <p style="margin:0 0 20px;font-size:13px;line-height:1.5;color:#5A6B76">SEO and tracking settings for the IKEA calculator.</p>
+
+      <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Password</label>
+      <input type="password" value="{{ pw }}" onChange="{{ onPw }}" onKeyDown="{{ onPwKey }}" placeholder="••••••••" autocomplete="current-password" style="width:100%;min-height:50px;padding:14px 15px;font-size:15px;color:#0A1620;background:#FFFFFF;border:1px solid {{ pwBrd }};border-radius:13px;outline:none;box-shadow:0 1px 2px rgba(10,22,32,.05)" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)" />
+
+      <sc-if value="{{ pwErr }}" hint-placeholder-val="{{ false }}">
+        <p style="margin:9px 0 0;font-size:12.5px;line-height:1.45;color:#B03216">Wrong password. Try again.</p>
+      </sc-if>
+
+      <button onClick="{{ signIn }}" style="width:100%;margin-top:18px;min-height:52px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:15px;font-weight:600;color:#FFFFFF;background:#0A1620;border:none;border-radius:14px;cursor:pointer;box-shadow:0 8px 20px rgba(10,22,32,.22);transition:transform .18s cubic-bezier(.16,1,.3,1),box-shadow .18s ease" style-hover="transform:translateY(-2px);box-shadow:0 12px 26px rgba(10,22,32,.28)" style-active="transform:translateY(0)">Sign in</button>
+
+      <p style="margin:16px 0 0;font-size:11px;line-height:1.5;color:#8A98A2">This gate keeps the panel out of casual reach. It is not server-side security — never store anything sensitive here.</p>
+    </div>
+  </div>
+</sc-if>
+
+<sc-if value="{{ unlocked }}" hint-placeholder-val="{{ false }}">
+  <div style="min-height:100dvh;padding:0 0 60px">
+
+    <div style="position:sticky;top:0;z-index:20;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 20px;background:rgba(255,255,255,.92);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid rgba(10,22,32,.09)">
+      <div style="display:flex;align-items:center;gap:9px;min-width:0">
+        <img src="pnix-logo.png" alt="PNIX" style="width:26px;height:26px;border-radius:6px;display:block" />
+        <div style="display:flex;flex-direction:column;gap:1px;min-width:0">
+          <span style="font-size:15px;font-weight:700;letter-spacing:-.02em;line-height:1.05">PNIX Admin</span>
+          <span style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.16em;text-transform:uppercase;color:#8A98A2;white-space:nowrap">SEO &amp; Tracking</span>
+        </div>
+      </div>
+      <button onClick="{{ signOut }}" style="flex-shrink:0;min-height:38px;padding:0 14px;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.14em;text-transform:uppercase;color:#5A6B76;background:transparent;border:1px solid rgba(10,22,32,.14);border-radius:999px;cursor:pointer;transition:background .2s ease,color .2s ease" style-hover="background:#F4F7F9;color:#0A1620">Sign out</button>
+    </div>
+
+    <div style="max-width:760px;margin:0 auto;padding:20px 20px 0">
+      <div style="display:flex;gap:6px;padding:4px;background:#E7EEF2;border-radius:13px">
+        <button onClick="{{ goSeo }}" style="flex:1;min-height:44px;font-size:13.5px;font-weight:600;color:{{ seoFg }};background:{{ seoBg }};border:none;border-radius:10px;cursor:pointer;box-shadow:{{ seoSh }};transition:background .2s ease,color .2s ease">SEO &amp; Tracking</button>
+        <button onClick="{{ goBlog }}" style="flex:1;min-height:44px;display:flex;align-items:center;justify-content:center;gap:7px;font-size:13.5px;font-weight:600;color:{{ blogFg }};background:{{ blogBg }};border:none;border-radius:10px;cursor:pointer;box-shadow:{{ blogSh }};transition:background .2s ease,color .2s ease">Blog<span style="font-family:'Space Mono',monospace;font-size:10px;padding:2px 6px;border-radius:999px;background:rgba(10,22,32,.08);color:#5A6B76">{{ postCount }}</span></button>
+      </div>
+    </div>
+
+    <sc-if value="{{ tabSeo }}" hint-placeholder-val="{{ true }}">
+    <div style="max-width:760px;margin:0 auto;padding:16px 20px 0;display:flex;flex-direction:column;gap:16px">
+
+      <div style="display:flex;align-items:center;gap:14px;padding:16px 18px;background:#FFFFFF;border:1px solid rgba(10,22,32,.09);border-radius:16px;box-shadow:0 1px 2px rgba(10,22,32,.05)">
+        <button onClick="{{ toggleIndex }}" style="flex-shrink:0;width:52px;height:30px;padding:3px;border:none;border-radius:999px;cursor:pointer;background:{{ indexBg }};transition:background .25s ease">
+          <span style="display:block;width:24px;height:24px;border-radius:50%;background:#FFFFFF;box-shadow:0 2px 5px rgba(10,22,32,.28);transform:{{ indexKnob }};transition:transform .25s cubic-bezier(.16,1,.3,1)"></span>
+        </button>
+        <div style="min-width:0">
+          <div style="font-size:14px;font-weight:600;line-height:1.35">Allow search engines to index this page</div>
+          <div style="font-size:12px;line-height:1.45;color:#5A6B76;margin-top:2px">{{ indexHint }}</div>
+        </div>
+      </div>
+
+      <div style="padding:20px 18px;background:#FFFFFF;border:1px solid rgba(10,22,32,.09);border-radius:16px;box-shadow:0 1px 2px rgba(10,22,32,.05)">
+        <h2 style="margin:0 0 3px;font-size:15px;font-weight:700;letter-spacing:-.01em">Social sharing and SEO</h2>
+        <p style="margin:0 0 18px;font-size:12.5px;line-height:1.5;color:#5A6B76">Shown in Google results and when the link is shared on WhatsApp.</p>
+
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+          <div style="flex:1 1 300px;min-width:0;display:flex;flex-direction:column;gap:16px">
+            <div>
+              <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Language</label>
+              <div style="display:flex;gap:6px;padding:4px;background:#F4F7F9;border-radius:12px">
+                <button onClick="{{ pickFi }}" style="flex:1;min-height:40px;font-size:13px;font-weight:600;color:{{ fiFg }};background:{{ fiBg }};border:none;border-radius:9px;cursor:pointer;box-shadow:{{ fiSh }};transition:background .2s ease,color .2s ease">Suomi</button>
+                <button onClick="{{ pickEn }}" style="flex:1;min-height:40px;font-size:13px;font-weight:600;color:{{ enFg }};background:{{ enBg }};border:none;border-radius:9px;cursor:pointer;box-shadow:{{ enSh }};transition:background .2s ease,color .2s ease">English</button>
+              </div>
+            </div>
+
+            <div>
+              <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Page title</label>
+              <input value="{{ title }}" onChange="{{ onTitle }}" style="width:100%;min-height:48px;padding:13px 14px;font-size:14px;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)" />
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:{{ titleCntFg }};margin-top:6px">{{ titleCnt }} / 60</div>
+            </div>
+
+            <div>
+              <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Meta description</label>
+              <textarea rows="3" value="{{ desc }}" onChange="{{ onDesc }}" style="width:100%;padding:13px 14px;font-size:14px;line-height:1.5;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none;resize:vertical" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)"></textarea>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:{{ descCntFg }};margin-top:6px">{{ descCnt }} / 160</div>
+            </div>
+
+            <div>
+              <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Share image URL</label>
+              <input value="{{ ogImg }}" onChange="{{ onOgImg }}" placeholder="https://laskuri.pnix.fi/share.png" style="width:100%;min-height:48px;padding:13px 14px;font-size:14px;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)" />
+              <div style="font-size:11.5px;line-height:1.5;color:#8A98A2;margin-top:6px">1200 × 630 px works best. A square logo gets cropped in WhatsApp.</div>
+            </div>
+          </div>
+
+          <div style="flex:1 1 240px;min-width:0">
+            <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">WhatsApp preview</label>
+            <div style="padding:12px;background:#E4F0DC;border-radius:14px">
+              <div style="border-radius:10px;overflow:hidden;background:#FFFFFF;box-shadow:0 1px 2px rgba(10,22,32,.12)">
+                <div style="aspect-ratio:1200/630;background:{{ prevBg }};display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#8A98A2">{{ prevNote }}</div>
+                <div style="padding:9px 11px 11px">
+                  <div style="font-size:12.5px;font-weight:600;line-height:1.35;color:#0A1620;overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ title }}</div>
+                  <div style="font-size:11.5px;line-height:1.4;color:#5A6B76;margin-top:3px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical">{{ desc }}</div>
+                  <div style="font-size:11px;color:#0089B8;margin-top:6px">{{ siteUrl }}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:20px 18px;background:#FFFFFF;border:1px solid rgba(10,22,32,.09);border-radius:16px;box-shadow:0 1px 2px rgba(10,22,32,.05)">
+        <h2 style="margin:0 0 3px;font-size:15px;font-weight:700;letter-spacing:-.01em">Shop pricing</h2>
+        <p style="margin:0 0 16px;font-size:12.5px;line-height:1.5;color:#5A6B76">A shop stays off the site until its prices are filled in. Only IKEA is live today.</p>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ shops }}" as="sh" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 14px;background:{{ sh.bg }};border:1px solid {{ sh.brd }};border-radius:13px">
+              <span style="flex:1 1 130px;min-width:0;font-size:13.5px;font-weight:600;color:#0A1620">{{ sh.name }}</span>
+              <input value="{{ sh.door }}" onChange="{{ sh.onDoor }}" placeholder="40" style="width:62px;min-height:40px;padding:0 10px;font-family:'Space Mono',monospace;font-size:13px;text-align:center;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:9px;outline:none" style-focus="border-color:#00CCFF" />
+              <input value="{{ sh.carry }}" onChange="{{ sh.onCarry }}" placeholder="50" style="width:62px;min-height:40px;padding:0 10px;font-family:'Space Mono',monospace;font-size:13px;text-align:center;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:9px;outline:none" style-focus="border-color:#00CCFF" />
+              <input value="{{ sh.incl }}" onChange="{{ sh.onIncl }}" placeholder="18" style="width:62px;min-height:40px;padding:0 10px;font-family:'Space Mono',monospace;font-size:13px;text-align:center;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:9px;outline:none" style-focus="border-color:#00CCFF" />
+              <input value="{{ sh.per }}" onChange="{{ sh.onPer }}" placeholder="1" style="width:62px;min-height:40px;padding:0 10px;font-family:'Space Mono',monospace;font-size:13px;text-align:center;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:9px;outline:none" style-focus="border-color:#00CCFF" />
+              <span style="flex-shrink:0;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:{{ sh.tagBg }};color:{{ sh.tagFg }}">{{ sh.state }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:#8A98A2">
+          <span>Door €</span><span>Carry €</span><span>Incl. km</span><span>€ / km</span>
+        </div>
+        <button onClick="{{ copyShops }}" style="margin-top:14px;min-height:42px;padding:0 16px;font-size:13px;font-weight:600;color:#0A1620;background:#00CCFF;border:none;border-radius:11px;cursor:pointer;transition:transform .18s cubic-bezier(.16,1,.3,1)" style-hover="transform:translateY(-2px)" style-active="transform:translateY(0)">{{ copyShopsLbl }}</button>
+        <p style="margin:10px 0 0;font-size:11.5px;line-height:1.5;color:#8A98A2">Fill a row in and copy the registry, then send it to me — I paste it into the calculator and switch that shop on.</p>
+      </div>
+
+      <div style="padding:20px 18px;background:#FFFFFF;border:1px solid rgba(10,22,32,.09);border-radius:16px;box-shadow:0 1px 2px rgba(10,22,32,.05)">
+        <h2 style="margin:0 0 3px;font-size:15px;font-weight:700;letter-spacing:-.01em">Tracking</h2>
+        <p style="margin:0 0 18px;font-size:12.5px;line-height:1.5;color:#5A6B76">Leave a field empty to skip that tag entirely.</p>
+
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px">
+          <div>
+            <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Google Ads ID</label>
+            <input value="{{ aw }}" onChange="{{ onAw }}" placeholder="AW-XXXXXXXXXX" style="width:100%;min-height:48px;padding:13px 14px;font-family:'Space Mono',monospace;font-size:13px;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)" />
+          </div>
+          <div>
+            <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">GA4 measurement ID</label>
+            <input value="{{ ga }}" onChange="{{ onGa }}" placeholder="G-XXXXXXXXXX" style="width:100%;min-height:48px;padding:13px 14px;font-family:'Space Mono',monospace;font-size:13px;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)" />
+          </div>
+          <div>
+            <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Meta Pixel ID</label>
+            <input value="{{ fb }}" onChange="{{ onFb }}" placeholder="000000000000000" style="width:100%;min-height:48px;padding:13px 14px;font-family:'Space Mono',monospace;font-size:13px;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)" />
+          </div>
+          <div>
+            <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Conversion label</label>
+            <input value="{{ label }}" onChange="{{ onLabel }}" placeholder="AbCdEfGhIjKl" style="width:100%;min-height:48px;padding:13px 14px;font-family:'Space Mono',monospace;font-size:13px;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)" />
+            <div style="font-size:11.5px;line-height:1.5;color:#8A98A2;margin-top:6px">From the WhatsApp-click conversion action in Google Ads.</div>
+          </div>
+        </div>
+
+        <div style="margin-top:16px">
+          <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Extra head tags</label>
+          <textarea rows="3" value="{{ extra }}" onChange="{{ onExtra }}" placeholder="google-site-verification meta tag, etc." style="width:100%;padding:13px 14px;font-family:'Space Mono',monospace;font-size:12.5px;line-height:1.55;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none;resize:vertical" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)"></textarea>
+        </div>
+      </div>
+
+      <div style="padding:20px 18px;background:#0A1620;border-radius:16px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+          <div style="min-width:0">
+            <h2 style="margin:0 0 3px;font-size:15px;font-weight:700;letter-spacing:-.01em;color:#FFFFFF">Generated head code</h2>
+            <p style="margin:0;font-size:12.5px;line-height:1.5;color:#8FA3B0">Paste this into the calculator's helmet block, replacing the commented placeholder.</p>
+          </div>
+          <button onClick="{{ copy }}" style="flex-shrink:0;min-height:42px;padding:0 18px;font-size:13px;font-weight:600;color:#0A1620;background:#00CCFF;border:none;border-radius:11px;cursor:pointer;transition:transform .18s cubic-bezier(.16,1,.3,1),filter .18s ease" style-hover="transform:translateY(-2px);filter:brightness(1.06)" style-active="transform:translateY(0)">{{ copyLbl }}</button>
+        </div>
+        <pre style="margin:0;padding:15px;max-height:320px;overflow:auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Space Mono',monospace;font-size:11.5px;line-height:1.7;color:#CFE6F0;white-space:pre-wrap;word-break:break-word">{{ snippet }}</pre>
+      </div>
+
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px;background:#FFFFFF;border:1px solid rgba(10,22,32,.09);border-radius:16px;box-shadow:0 1px 2px rgba(10,22,32,.05)">
+        <button onClick="{{ save }}" style="min-height:50px;padding:0 26px;font-size:15px;font-weight:600;color:#FFFFFF;background:#0FA85F;border:none;border-radius:13px;cursor:pointer;box-shadow:0 8px 20px rgba(15,168,95,.28);transition:transform .18s cubic-bezier(.16,1,.3,1),box-shadow .18s ease" style-hover="transform:translateY(-2px);box-shadow:0 12px 26px rgba(15,168,95,.34)" style-active="transform:translateY(0)">Save settings</button>
+        <button onClick="{{ reset }}" style="min-height:50px;padding:0 18px;font-size:13.5px;font-weight:500;color:#5A6B76;background:transparent;border:1px solid rgba(10,22,32,.14);border-radius:13px;cursor:pointer;transition:background .2s ease,color .2s ease" style-hover="background:#F4F7F9;color:#0A1620">Reset to defaults</button>
+        <span style="font-size:12px;line-height:1.5;color:#8A98A2">{{ savedNote }}</span>
+      </div>
+
+      <p style="margin:0;padding:0 2px;font-size:11.5px;line-height:1.6;color:#8A98A2">Settings save in this browser only. The live page picks up tracking IDs when you paste the generated code into its head — that step is what makes them apply to every visitor.</p>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ tabBlog }}" hint-placeholder-val="{{ false }}">
+    <div style="max-width:760px;margin:0 auto;padding:16px 20px 0;display:flex;flex-direction:column;gap:16px">
+
+      <div style="padding:20px 18px;background:#FFFFFF;border:1px solid rgba(10,22,32,.09);border-radius:16px;box-shadow:0 1px 2px rgba(10,22,32,.05)">
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+          <div style="min-width:0">
+            <h2 style="margin:0 0 3px;font-size:15px;font-weight:700;letter-spacing:-.01em">Posts</h2>
+            <p style="margin:0;font-size:12.5px;line-height:1.5;color:#5A6B76">Written for organic search and AI answers.</p>
+          </div>
+          <button onClick="{{ newPost }}" style="flex-shrink:0;min-height:42px;padding:0 16px;font-size:13.5px;font-weight:600;color:#FFFFFF;background:#0A1620;border:none;border-radius:11px;cursor:pointer;transition:transform .18s cubic-bezier(.16,1,.3,1)" style-hover="transform:translateY(-2px)" style-active="transform:translateY(0)">New post</button>
+        </div>
+
+        <sc-if value="{{ noPosts }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:26px 18px;text-align:center;background:#F7F9FA;border:1px dashed rgba(10,22,32,.14);border-radius:13px">
+            <div style="font-size:13.5px;font-weight:600;color:#0A1620">No posts yet</div>
+            <div style="font-size:12.5px;line-height:1.5;color:#5A6B76;margin-top:4px">Start with a question a customer would type — "Paljonko IKEA-kuljetus maksaa?"</div>
+          </div>
+        </sc-if>
+
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ posts }}" as="p" hint-placeholder-count="2">
+            <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;background:{{ p.bg }};border:1px solid {{ p.brd }};border-radius:13px">
+              <button onClick="{{ p.open }}" style="flex:1;min-width:0;display:flex;flex-direction:column;gap:3px;padding:0;background:none;border:none;cursor:pointer;text-align:left">
+                <span style="font-size:14px;font-weight:600;line-height:1.35;color:#0A1620;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">{{ p.title }}</span>
+                <span style="font-family:'Space Mono',monospace;font-size:10.5px;color:#8A98A2;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:100%">/{{ p.slug }} · {{ p.words }} words</span>
+              </button>
+              <span style="flex-shrink:0;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;padding:4px 9px;border-radius:999px;background:{{ p.tagBg }};color:{{ p.tagFg }}">{{ p.status }}</span>
+              <button onClick="{{ p.remove }}" style="flex-shrink:0;width:34px;height:34px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#8A98A2;background:transparent;border:1px solid rgba(10,22,32,.12);border-radius:9px;cursor:pointer;transition:color .2s ease,border-color .2s ease" style-hover="color:#B03216;border-color:rgba(176,50,22,.4)">×</button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ editing }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:20px 18px;background:#FFFFFF;border:1px solid rgba(0,204,255,.34);border-radius:16px;box-shadow:0 1px 2px rgba(10,22,32,.05),0 8px 24px rgba(0,204,255,.07)">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px">
+            <h2 style="margin:0;font-size:15px;font-weight:700;letter-spacing:-.01em">Edit post</h2>
+            <div style="display:flex;gap:6px;padding:3px;background:#F4F7F9;border-radius:10px">
+              <button onClick="{{ setDraft }}" style="min-height:34px;padding:0 12px;font-size:12px;font-weight:600;color:{{ draftFg }};background:{{ draftBg }};border:none;border-radius:8px;cursor:pointer;box-shadow:{{ draftSh }}">Draft</button>
+              <button onClick="{{ setLive }}" style="min-height:34px;padding:0 12px;font-size:12px;font-weight:600;color:{{ liveFg }};background:{{ liveBg }};border:none;border-radius:8px;cursor:pointer;box-shadow:{{ liveSh }}">Published</button>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div>
+              <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Headline</label>
+              <input value="{{ pTitle }}" onChange="{{ onPTitle }}" placeholder="Paljonko IKEA-kuljetus maksaa Helsingissä?" style="width:100%;min-height:48px;padding:13px 14px;font-size:15px;font-weight:600;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)" />
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:{{ pTitleFg }};margin-top:6px">{{ pTitleCnt }} / 60 — this becomes the page title</div>
+            </div>
+
+            <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px">
+              <div>
+                <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">URL slug</label>
+                <input value="{{ pSlug }}" onChange="{{ onPSlug }}" placeholder="ikea-kuljetus-hinta" style="width:100%;min-height:48px;padding:13px 14px;font-family:'Space Mono',monospace;font-size:13px;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)" />
+              </div>
+              <div>
+                <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Language</label>
+                <div style="display:flex;gap:6px;padding:4px;background:#F4F7F9;border-radius:12px">
+                  <button onClick="{{ pFi }}" style="flex:1;min-height:40px;font-size:13px;font-weight:600;color:{{ pFiFg }};background:{{ pFiBg }};border:none;border-radius:9px;cursor:pointer;box-shadow:{{ pFiSh }}">Suomi</button>
+                  <button onClick="{{ pEn }}" style="flex:1;min-height:40px;font-size:13px;font-weight:600;color:{{ pEnFg }};background:{{ pEnBg }};border:none;border-radius:9px;cursor:pointer;box-shadow:{{ pEnSh }}">English</button>
+                </div>
+              </div>
+            </div>
+
+            <div>
+              <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Summary</label>
+              <textarea rows="2" value="{{ pExcerpt }}" onChange="{{ onPExcerpt }}" placeholder="One or two sentences. This is the meta description and the answer AI assistants quote." style="width:100%;padding:13px 14px;font-size:14px;line-height:1.5;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none;resize:vertical" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)"></textarea>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:{{ pExFg }};margin-top:6px">{{ pExCnt }} / 160</div>
+            </div>
+
+            <div>
+              <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Body</label>
+              <textarea rows="14" value="{{ pBody }}" onChange="{{ onPBody }}" placeholder="# Heading&#10;&#10;Paragraph text.&#10;&#10;## Sub-heading&#10;&#10;- List item&#10;- Another item" style="width:100%;padding:14px 15px;font-size:14px;line-height:1.65;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none;resize:vertical" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)"></textarea>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A98A2;margin-top:6px">{{ pWords }} words · {{ pRead }} min read · # and ## for headings, - for lists</div>
+            </div>
+
+            <div>
+              <label style="display:block;font-family:'Space Mono',monospace;font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;color:#5A6B76;margin-bottom:7px">Questions this post answers</label>
+              <textarea rows="3" value="{{ pFaq }}" onChange="{{ onPFaq }}" placeholder="Paljonko IKEA-kuljetus maksaa? | Hinta alkaa 40 eurosta.&#10;Kannatteko sisälle? | Kyllä, kantoapu maksaa 50 eurosta." style="width:100%;padding:13px 14px;font-family:'Space Mono',monospace;font-size:12.5px;line-height:1.6;color:#0A1620;background:#FFFFFF;border:1px solid rgba(10,22,32,.14);border-radius:12px;outline:none;resize:vertical" style-focus="border-color:#00CCFF;box-shadow:0 0 0 3px rgba(0,204,255,.18)"></textarea>
+              <div style="font-size:11.5px;line-height:1.5;color:#8A98A2;margin-top:6px">One per line, question and answer separated by a vertical bar. These become FAQ structured data — the part that gets you into AI answers and Google's question boxes.</div>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:20px 18px;background:#0A1620;border-radius:16px">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px">
+            <div style="min-width:0">
+              <h2 style="margin:0 0 3px;font-size:15px;font-weight:700;letter-spacing:-.01em;color:#FFFFFF">Generated page</h2>
+              <p style="margin:0;font-size:12.5px;line-height:1.5;color:#8FA3B0">Save as {{ pFile }} next to the calculator.</p>
+            </div>
+            <button onClick="{{ copyPost }}" style="flex-shrink:0;min-height:42px;padding:0 18px;font-size:13px;font-weight:600;color:#0A1620;background:#00CCFF;border:none;border-radius:11px;cursor:pointer;transition:transform .18s cubic-bezier(.16,1,.3,1),filter .18s ease" style-hover="transform:translateY(-2px);filter:brightness(1.06)" style-active="transform:translateY(0)">{{ copyPostLbl }}</button>
+          </div>
+          <pre style="margin:0;padding:15px;max-height:300px;overflow:auto;background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.1);border-radius:12px;font-family:'Space Mono',monospace;font-size:11.5px;line-height:1.7;color:#CFE6F0;white-space:pre-wrap;word-break:break-word">{{ postHtml }}</pre>
+        </div>
+      </sc-if>
+
+      <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:16px 18px;background:#FFFFFF;border:1px solid rgba(10,22,32,.09);border-radius:16px;box-shadow:0 1px 2px rgba(10,22,32,.05)">
+        <button onClick="{{ savePosts }}" style="min-height:50px;padding:0 26px;font-size:15px;font-weight:600;color:#FFFFFF;background:#0FA85F;border:none;border-radius:13px;cursor:pointer;box-shadow:0 8px 20px rgba(15,168,95,.28);transition:transform .18s cubic-bezier(.16,1,.3,1),box-shadow .18s ease" style-hover="transform:translateY(-2px);box-shadow:0 12px 26px rgba(15,168,95,.34)" style-active="transform:translateY(0)">Save posts</button>
+        <button onClick="{{ publishAll }}" style="min-height:50px;padding:0 22px;font-size:14px;font-weight:600;color:#0A1620;background:#00CCFF;border:none;border-radius:13px;cursor:pointer;box-shadow:0 8px 20px rgba(0,204,255,.26);transition:transform .18s cubic-bezier(.16,1,.3,1),box-shadow .18s ease" style-hover="transform:translateY(-2px);box-shadow:0 12px 26px rgba(0,204,255,.32)" style-active="transform:translateY(0)">Publish all files</button>
+        <button onClick="{{ copySitemap }}" style="min-height:50px;padding:0 18px;font-size:13.5px;font-weight:500;color:#5A6B76;background:transparent;border:1px solid rgba(10,22,32,.14);border-radius:13px;cursor:pointer;transition:background .2s ease,color .2s ease" style-hover="background:#F4F7F9;color:#0A1620">{{ sitemapLbl }}</button>
+        <span style="font-size:12px;line-height:1.5;color:#8A98A2">{{ blogNote }}</span>
+      </div>
+
+      <div style="padding:20px 18px;background:#FFFFFF;border:1px solid rgba(10,22,32,.09);border-radius:16px;box-shadow:0 1px 2px rgba(10,22,32,.05)">
+        <h2 style="margin:0 0 3px;font-size:15px;font-weight:700;letter-spacing:-.01em">Blog page &amp; crawler files</h2>
+        <p style="margin:0 0 16px;font-size:12.5px;line-height:1.5;color:#5A6B76">The blog front page lists your published posts. The two text files tell ChatGPT, Claude and Perplexity what you do and where to read it.</p>
+
+        <div style="display:flex;gap:6px;padding:4px;background:#F4F7F9;border-radius:12px;margin-bottom:14px">
+          <button onClick="{{ pickIndex }}" style="flex:1;min-height:40px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:{{ idxFg }};background:{{ idxBg }};border:none;border-radius:9px;cursor:pointer;box-shadow:{{ idxSh }}">blog page</button>
+          <button onClick="{{ pickLlms }}" style="flex:1;min-height:40px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:{{ llmsFg }};background:{{ llmsBg }};border:none;border-radius:9px;cursor:pointer;box-shadow:{{ llmsSh }}">llms.txt</button>
+          <button onClick="{{ pickBots }}" style="flex:1;min-height:40px;font-family:'Space Mono',monospace;font-size:12px;font-weight:700;color:{{ botsFg }};background:{{ botsBg }};border:none;border-radius:9px;cursor:pointer;box-shadow:{{ botsSh }}">robots.txt</button>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:10px">
+          <span style="font-size:12.5px;line-height:1.5;color:#5A6B76">{{ crawlNote }}</span>
+          <button onClick="{{ copyCrawl }}" style="flex-shrink:0;min-height:40px;padding:0 16px;font-size:13px;font-weight:600;color:#0A1620;background:#00CCFF;border:none;border-radius:10px;cursor:pointer;transition:transform .18s cubic-bezier(.16,1,.3,1),filter .18s ease" style-hover="transform:translateY(-2px);filter:brightness(1.06)" style-active="transform:translateY(0)">{{ copyCrawlLbl }}</button>
+        </div>
+        <pre style="margin:0;padding:15px;max-height:260px;overflow:auto;background:#F7F9FA;border:1px solid rgba(10,22,32,.09);border-radius:12px;font-family:'Space Mono',monospace;font-size:11.5px;line-height:1.7;color:#0A1620;white-space:pre-wrap;word-break:break-word">{{ crawlTxt }}</pre>
+      </div>
+
+      <p style="margin:0;padding:0 2px;font-size:11.5px;line-height:1.6;color:#8A98A2">Drafts live in this browser. Publishing means copying the generated page into your project and deploying it — the FAQ data travels with it, which is what makes the post quotable by AI assistants.</p>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ toast }}" hint-placeholder-val="{{ false }}">
+      <div style="position:fixed;left:50%;bottom:26px;transform:translateX(-50%);z-index:40;display:flex;align-items:center;gap:9px;padding:13px 20px;background:#0A1620;border-radius:999px;box-shadow:0 12px 30px rgba(6,16,22,.3);animation:adminToast 2.4s ease forwards">
+        <span style="width:7px;height:7px;border-radius:50%;background:#00CCFF"></span>
+        <span style="font-size:13.5px;font-weight:500;color:#FFFFFF;white-space:nowrap">{{ toast }}</span>
+      </div>
+    </sc-if>
+  </div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:900,&quot;height&quot;:1100}}">
+const KEY = "pnix-admin-seo";
+const TAG = "<" + "script";
+const ETAG = "<" + "/script>";
+const DEFAULTS = {
+  index: true, lang: "fi",
+  titleFi: "PNIX — IKEA kotiinkuljetuksen hintalaskuri, Helsingin seutu",
+  descFi: "Laske IKEA-noudon ja kotiinkuljetuksen hinta heti Helsingissä, Espoossa ja Vantaalla. Alkaen 40 €.",
+  titleEn: "PNIX — IKEA home delivery price calculator, Helsinki region",
+  descEn: "Get an instant price for IKEA pickup and home delivery in Helsinki, Espoo and Vantaa. From 40 €.",
+  ogImg: "https://laskuri.pnix.fi/pnix-logo.png",
+  aw: "AW-16668032996", ga: "", fb: "508108858180354", label: "", extra: "",
+  shops: {},
+};
+
+const BKEY = "pnix-admin-blog";
+const SHOP_IDS = [
+  { id: "ikea", name: "IKEA" }, { id: "jysk", name: "JYSK" }, { id: "bauhaus", name: "Bauhaus" },
+  { id: "krauta", name: "K-Rauta" }, { id: "puuilo", name: "Puuilo" }, { id: "sotka", name: "Sotka" },
+  { id: "masku", name: "Masku" }, { id: "tori", name: "Second-hand / Tori" },
+];
+const SITE = "https://laskuri.pnix.fi";
+
+class Component extends DCLogic {
+  state = {
+    auth: false, pw: "", pwErr: false, shake: 0,
+    cfg: Object.assign({}, DEFAULTS),
+    dirty: false, toast: "", copied: false,
+    tab: "seo", posts: [], cur: null, blogDirty: false, copiedPost: false, copiedMap: false,
+    crawl: "index", copiedCrawl: false, copiedShops: false,
+  };
+
+  componentDidMount() {
+    try {
+      const raw = localStorage.getItem(KEY);
+      if (raw) this.setState({ cfg: Object.assign({}, DEFAULTS, JSON.parse(raw)) });
+      const blog = localStorage.getItem(BKEY);
+      if (blog) this.setState({ posts: JSON.parse(blog) || [] });
+      if (sessionStorage.getItem(KEY + "-auth") === "1") this.setState({ auth: true });
+    } catch (e) {}
+  }
+
+  slugify(s) {
+    return (s || "").toLowerCase()
+      .replace(/[äå]/g, "a").replace(/ö/g, "o")
+      .replace(/[^a-z0-9\s-]/g, "").trim()
+      .replace(/\s+/g, "-").slice(0, 60);
+  }
+
+  words(s) { return (s || "").trim() ? s.trim().split(/\s+/).length : 0; }
+
+  esc(s) {
+    return (s || "").replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  setPost(patch) {
+    this.setState((s) => ({
+      posts: s.posts.map((p) => (p.id === s.cur ? Object.assign({}, p, patch) : p)),
+      blogDirty: true,
+    }));
+  }
+
+  // Minimal block renderer — headings, lists, paragraphs. Enough for a blog post,
+  // and predictable enough that the output HTML stays readable.
+  bodyHtml(src) {
+    const out = [];
+    let list = null;
+    const flush = () => { if (list) { out.push("<ul>\n" + list.map((li) => "  <li>" + this.esc(li) + "</li>").join("\n") + "\n</ul>"); list = null; } };
+    (src || "").split("\n").forEach((raw) => {
+      const line = raw.trim();
+      if (!line) { flush(); return; }
+      if (line.indexOf("## ") === 0) { flush(); out.push("<h2>" + this.esc(line.slice(3)) + "</h2>"); return; }
+      if (line.indexOf("# ") === 0) { flush(); out.push("<h2>" + this.esc(line.slice(2)) + "</h2>"); return; }
+      if (line.indexOf("- ") === 0) { if (!list) list = []; list.push(line.slice(2)); return; }
+      flush();
+      out.push("<p>" + this.esc(line) + "</p>");
+    });
+    flush();
+    return out.join("\n");
+  }
+
+  faqPairs(src) {
+    return (src || "").split("\n").map((l) => {
+      const i = l.indexOf("|");
+      if (i < 0) return null;
+      const q = l.slice(0, i).trim(), a = l.slice(i + 1).trim();
+      return q && a ? { q, a } : null;
+    }).filter(Boolean);
+  }
+
+  postHtml(p) {
+    if (!p) return "";
+    const url = SITE + "/blog/" + p.slug;
+    const faq = this.faqPairs(p.faq);
+    const ld = [{
+      "@context": "https://schema.org", "@type": "BlogPosting",
+      headline: p.title, description: p.excerpt, inLanguage: p.lang === "en" ? "en-FI" : "fi-FI",
+      datePublished: p.date, dateModified: p.date, mainEntityOfPage: url,
+      author: { "@type": "Organization", name: "PNIX", url: SITE },
+      publisher: { "@type": "Organization", name: "PNIX", taxID: "3436982-6" },
+    }];
+    if (faq.length) ld.push({
+      "@context": "https://schema.org", "@type": "FAQPage",
+      mainEntity: faq.map((f) => ({ "@type": "Question", name: f.q, acceptedAnswer: { "@type": "Answer", text: f.a } })),
+    });
+    const faqHtml = faq.length
+      ? "\n<section>\n<h2>" + (p.lang === "en" ? "Common questions" : "Usein kysyttyä") + "</h2>\n"
+        + faq.map((f) => "<h3>" + this.esc(f.q) + "</h3>\n<p>" + this.esc(f.a) + "</p>").join("\n") + "\n</section>"
+      : "";
+    const cta = p.lang === "en" ? "Calculate your delivery price" : "Laske kuljetuksesi hinta";
+    const back = p.lang === "en" ? "PNIX — IKEA delivery, Helsinki region" : "PNIX — IKEA-kuljetus, Helsingin seutu";
+    return [
+      "<!DOCTYPE html>",
+      '<html lang="' + (p.lang === "en" ? "en" : "fi") + '">',
+      "<head>",
+      '<meta charset="utf-8">',
+      '<meta name="viewport" content="width=device-width, initial-scale=1">',
+      "<title>" + this.esc(p.title) + "</title>",
+      '<meta name="description" content="' + this.esc(p.excerpt) + '" />',
+      '<meta name="robots" content="' + (p.status === "live" ? "index,follow" : "noindex,nofollow") + '" />',
+      '<link rel="canonical" href="' + url + '" />',
+      '<meta property="og:type" content="article" />',
+      '<meta property="og:title" content="' + this.esc(p.title) + '" />',
+      '<meta property="og:description" content="' + this.esc(p.excerpt) + '" />',
+      '<meta property="og:url" content="' + url + '" />',
+      TAG + ' type="application/ld+json">' + JSON.stringify(ld.length === 1 ? ld[0] : ld) + ETAG,
+      "</head>",
+      "<body>",
+      "<article>",
+      "<h1>" + this.esc(p.title) + "</h1>",
+      "<p><em>" + this.esc(p.excerpt) + "</em></p>",
+      this.bodyHtml(p.body),
+      faqHtml,
+      '<p><a href="' + SITE + '/">' + cta + "</a></p>",
+      "</article>",
+      '<footer><p><a href="' + SITE + '/">' + back + "</a> · Y-tunnus 3436982-6</p></footer>",
+      "</body>",
+      "</html>",
+    ].join("\n");
+  }
+
+  // Gate only — obfuscation, not security. Anything truly sensitive needs a server.
+  check(v) { return (v || "").trim().toLowerCase() === "pnix2026"; }
+
+  set(patch) {
+    this.setState((s) => ({ cfg: Object.assign({}, s.cfg, patch), dirty: true }));
+  }
+
+  // AI crawlers read llms.txt for orientation and robots.txt for permission.
+  // Both are plain text at the domain root.
+  crawlFile(kind, posts) {
+    const live = (posts || []).filter((p) => p.status === "live" && p.slug);
+    if (kind === "bots") {
+      const bots = ["GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot", "Claude-User", "anthropic-ai", "PerplexityBot", "Perplexity-User", "Google-Extended", "Applebot-Extended", "Bingbot", "CCBot"];
+      return ["# PNIX — laskuri.pnix.fi", "", "User-agent: *", "Allow: /", ""]
+        .concat(bots.map((b) => "User-agent: " + b + "\nAllow: /\n"))
+        .concat(["Sitemap: " + SITE + "/sitemap.xml"]).join("\n");
+    }
+    const L = [
+      "# PNIX",
+      "",
+      "> Independent delivery service in the Helsinki region. We collect IKEA purchases from IKEA Espoo or IKEA Vantaa and deliver them to the customer's door, with optional carry-in. Not owned or authorised by IKEA. Business ID 3436982-6.",
+      "",
+      "## Pricing",
+      "",
+      "- Doorstep delivery from 40 EUR, carry-in from 50 EUR. All prices include VAT 25.5%.",
+      "- The first 18 km are included; beyond that, 1 EUR per kilometre on the real driving route.",
+      "- Quotes come from the actual road route between the store and the delivery address, not an estimate.",
+      "- Bookings are confirmed over WhatsApp before anything is scheduled.",
+      "",
+      "## Service area",
+      "",
+      "- Helsinki, Espoo, Vantaa and the surrounding municipalities.",
+      "- Pickup from IKEA Espoo (Espoontie 21) and IKEA Vantaa (Porttisuontie 18).",
+      "",
+      "## Pages",
+      "",
+      "- [Price calculator](" + SITE + "/): instant price for IKEA pickup and home delivery.",
+      "- [Price calculator, English](" + SITE + "/?lang=en)",
+    ];
+    if (live.length) {
+      L.push("", "## Articles", "");
+      live.forEach((p) => L.push("- [" + (p.title || p.slug) + "](" + SITE + "/blog/" + p.slug + "): " + (p.excerpt || "")));
+    }
+    L.push("", "## Contact", "", "- WhatsApp: https://wa.me/358442490064");
+    return L.join("\n");
+  }
+
+  // The blog's front page. Same visual language as the calculator so it reads as
+  // one site: white ground, ink text, cyan accents, Inter + Space Mono.
+  indexHtml(posts, lang) {
+    const fi = lang !== "en";
+    const live = (posts || []).filter((p) => p.status === "live" && p.slug && (p.lang === "en") === !fi);
+    const url = SITE + "/blog/" + (fi ? "" : "en");
+    const title = fi ? "Kuljetusopas — PNIX" : "Delivery guide — PNIX";
+    const lede = fi
+      ? "Hinnat, mitat ja käytännön neuvot noutoon ja kotiinkuljetukseen pääkaupunkiseudulla."
+      : "Prices, measurements and practical advice for pickup and home delivery in the Helsinki region.";
+    const card = (p) => [
+      '<li style="border-top:1px solid rgba(10,22,32,.1)">',
+      '  <a href="/blog/' + p.slug + '" style="display:block;padding:22px 0;text-decoration:none;color:inherit">',
+      '    <h2 style="margin:0 0 6px;font-size:19px;line-height:1.3;font-weight:700;letter-spacing:-.02em;color:#0A1620">' + this.esc(p.title) + "</h2>",
+      '    <p style="margin:0 0 9px;font-size:14px;line-height:1.55;color:#5A6B76">' + this.esc(p.excerpt) + "</p>",
+      '    <span style="font-family:\'Space Mono\',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#0089B8">'
+        + (fi ? "Lue lisää" : "Read more") + " · " + Math.max(1, Math.round(this.words(p.body) / 200)) + " min</span>",
+      "  </a>",
+      "</li>",
+    ].join("\n");
+    const empty = '<p style="margin:0;padding:26px 0;font-size:14px;color:#8A98A2;border-top:1px solid rgba(10,22,32,.1)">'
+      + (fi ? "Ensimmäinen artikkeli on tulossa." : "First article coming soon.") + "</p>";
+    return [
+      "<!DOCTYPE html>",
+      '<html lang="' + (fi ? "fi" : "en") + '">',
+      "<head>",
+      '<meta charset="utf-8">',
+      '<meta name="viewport" content="width=device-width, initial-scale=1">',
+      "<title>" + title + "</title>",
+      '<meta name="description" content="' + lede + '" />',
+      '<link rel="canonical" href="' + url + '" />',
+      '<meta property="og:type" content="website" />',
+      '<meta property="og:title" content="' + title + '" />',
+      '<meta property="og:description" content="' + lede + '" />',
+      '<link rel="preconnect" href="https://fonts.googleapis.com">',
+      '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>',
+      '<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">',
+      TAG + ' type="application/ld+json">' + JSON.stringify({
+        "@context": "https://schema.org", "@type": "Blog", name: title, description: lede, url,
+        inLanguage: fi ? "fi-FI" : "en-FI",
+        publisher: { "@type": "Organization", name: "PNIX", url: SITE, taxID: "3436982-6" },
+      }) + ETAG,
+      "</head>",
+      '<body style="margin:0;background:#FFFFFF;color:#0A1620;font-family:Inter,system-ui,-apple-system,sans-serif;-webkit-font-smoothing:antialiased">',
+      '<div style="max-width:680px;margin:0 auto;padding:0 20px 60px">',
+      '  <header style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0;border-bottom:1px solid rgba(10,22,32,.1)">',
+      '    <a href="' + SITE + '/" style="display:flex;align-items:center;gap:9px;text-decoration:none;color:inherit">',
+      '      <img src="/pnix-logo.png" alt="PNIX" width="26" height="26" style="border-radius:6px;display:block">',
+      '      <span style="font-size:15px;font-weight:700;letter-spacing:-.02em">PNIX</span>',
+      "    </a>",
+      '    <a href="' + SITE + "/" + (fi ? "" : "?lang=en") + '" style="font-family:\'Space Mono\',monospace;font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#0089B8;text-decoration:none">'
+        + (fi ? "Laske hinta" : "Calculate price") + "</a>",
+      "  </header>",
+      '  <h1 style="margin:34px 0 8px;font-size:31px;line-height:1.2;font-weight:700;letter-spacing:-.035em;text-wrap:pretty">' + title.split(" —")[0] + "</h1>",
+      '  <p style="margin:0 0 30px;font-size:15px;line-height:1.55;color:#5A6B76;max-width:46ch">' + lede + "</p>",
+      live.length ? '  <ul style="list-style:none;margin:0;padding:0">\n' + live.map(card).join("\n") + "\n  </ul>" : "  " + empty,
+      '  <footer style="margin-top:44px;padding-top:18px;border-top:1px solid rgba(10,22,32,.1);font-size:11.5px;line-height:1.6;color:#8A98A2">',
+      "    <p style=\"margin:0\">PNIX · Y-tunnus 3436982-6 · " + (fi
+        ? "Itsenäinen kuljetuspalvelu. Emme ole IKEA:n omistama tai valtuuttama."
+        : "Independent delivery service. Not owned or authorised by IKEA.") + "</p>",
+      "  </footer>",
+      "</div>",
+      "</body>",
+      "</html>",
+    ].join("\n");
+  }
+
+  // Closest thing to one-click publishing without a repo: emit every file the
+  // deploy needs, in one go, correctly named.
+  exportAll(posts) {
+    const live = (posts || []).filter((p) => p.status === "live" && p.slug);
+    const files = live.map((p) => ({ name: p.slug + ".html", body: this.postHtml(p), type: "text/html" }));
+    files.push({ name: "blog-index-fi.html", body: this.indexHtml(posts, "fi"), type: "text/html" });
+    files.push({ name: "blog-index-en.html", body: this.indexHtml(posts, "en"), type: "text/html" });
+    const urls = [SITE + "/", SITE + "/blog/"].concat(live.map((p) => SITE + "/blog/" + p.slug));
+    files.push({ name: "sitemap.xml", type: "application/xml",
+      body: '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+        + urls.map((u) => "  <url><loc>" + u + "</loc></url>").join("\n") + "\n</urlset>" });
+    files.push({ name: "llms.txt", body: this.crawlFile("llms", posts), type: "text/plain" });
+    files.push({ name: "robots.txt", body: this.crawlFile("bots", posts), type: "text/plain" });
+    files.forEach((f, i) => setTimeout(() => {
+      try {
+        const url = URL.createObjectURL(new Blob([f.body], { type: f.type + ";charset=utf-8" }));
+        const a = document.createElement("a");
+        a.href = url; a.download = f.name;
+        document.body.appendChild(a); a.click(); a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 4000);
+      } catch (e) {}
+    }, i * 350));
+    return files.length;
+  }
+
+  grab(txt, flagKey) {
+    const done = () => {
+      const patch = {}; patch[flagKey] = true;
+      this.setState(patch);
+      setTimeout(() => { const off = {}; off[flagKey] = false; this.setState(off); }, 1600);
+    };
+    try {
+      if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, done);
+      else done();
+    } catch (e) { done(); }
+  }
+
+  flash(msg) {
+    clearTimeout(this._toast);
+    this.setState({ toast: msg });
+    this._toast = setTimeout(() => this.setState({ toast: "" }), 2400);
+  }
+
+  buildSnippet() {
+    const c = this.state.cfg;
+    const L = [];
+    const fi = c.lang === "fi";
+    L.push("<title>" + (fi ? c.titleFi : c.titleEn) + "</title>");
+    L.push('<meta name="description" content="' + (fi ? c.descFi : c.descEn) + '" />');
+    L.push('<meta name="robots" content="' + (c.index ? "index,follow" : "noindex,nofollow") + '" />');
+    L.push('<meta name="pnix-seo-fi" content="' + c.titleFi + "|" + c.descFi + '" />');
+    L.push('<meta name="pnix-seo-en" content="' + c.titleEn + "|" + c.descEn + '" />');
+    if (c.ogImg) {
+      L.push('<meta property="og:image" content="' + c.ogImg + '" />');
+      L.push('<meta name="twitter:image" content="' + c.ogImg + '" />');
+    }
+    const gids = [c.aw, c.ga].filter(Boolean);
+    if (gids.length) {
+      L.push("");
+      L.push(TAG + ' async src="https://www.googletagmanager.com/gtag/js?id=' + gids[0] + '">' + ETAG);
+      L.push(TAG + ">window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());");
+      gids.forEach((g) => L.push("gtag('config','" + g + "');"));
+      L.push(ETAG);
+    }
+    if (c.aw && c.label) {
+      L.push("");
+      L.push(TAG + ">window.addEventListener('pnix:whatsapp',function(e){gtag('event','conversion',{send_to:'" + c.aw + "/" + c.label + "',value:(e.detail&&e.detail.value)||0,currency:'EUR'});});" + ETAG);
+    }
+    if (c.fb) {
+      L.push("");
+      L.push(TAG + ">!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');fbq('init','" + c.fb + "');fbq('track','PageView');" + ETAG);
+    }
+    if (c.extra.trim()) { L.push(""); L.push(c.extra.trim()); }
+    return L.join("\n");
+  }
+
+  renderVals() {
+    const s = this.state, c = s.cfg, fi = c.lang === "fi";
+    const title = fi ? c.titleFi : c.titleEn;
+    const desc = fi ? c.descFi : c.descEn;
+    const seg = (on) => ({
+      fg: on ? "#0A1620" : "#5A6B76",
+      bg: on ? "#FFFFFF" : "transparent",
+      sh: on ? "0 1px 3px rgba(10,22,32,.14)" : "none",
+    });
+    const f = seg(fi), e = seg(!fi);
+    const t0 = seg(s.tab === "seo"), t1 = seg(s.tab === "blog");
+    const cur = s.posts.filter((p) => p.id === s.cur)[0] || null;
+    const wc = cur ? this.words(cur.body) : 0;
+    const d0 = seg(!cur || cur.status !== "live"), d1 = seg(!!cur && cur.status === "live");
+    const x0 = seg(s.crawl === "llms"), x1 = seg(s.crawl === "bots"), x2 = seg(s.crawl === "index");
+    const crawlBody = s.crawl === "index"
+      ? this.indexHtml(s.posts, "fi")
+      : this.crawlFile(s.crawl === "bots" ? "bots" : "llms", s.posts);
+    const l0 = seg(!cur || cur.lang !== "en"), l1 = seg(!!cur && cur.lang === "en");
+    const doSignIn = () => {
+      if (!this.check(this.state.pw)) { this.setState((x) => ({ pwErr: true, shake: x.shake + 1 })); return; }
+      try { sessionStorage.setItem(KEY + "-auth", "1"); } catch (err) {}
+      this.setState({ auth: true, pw: "", pwErr: false });
+    };
+
+    return {
+      locked: !s.auth, unlocked: s.auth,
+      loginAnim: s.shake ? "adminShake .4s ease" : "adminIn .4s cubic-bezier(.16,1,.3,1)",
+      pw: s.pw, pwErr: s.pwErr, pwBrd: s.pwErr ? "#B03216" : "rgba(10,22,32,.14)",
+      onPw: (ev) => this.setState({ pw: ev.target.value, pwErr: false }),
+      onPwKey: (ev) => { if (ev.key === "Enter") doSignIn(); },
+      signIn: doSignIn,
+      signOut: () => {
+        try { sessionStorage.removeItem(KEY + "-auth"); } catch (err) {}
+        this.setState({ auth: false });
+      },
+
+      indexBg: c.index ? "#0A1620" : "#C4CED5",
+      indexKnob: c.index ? "translateX(22px)" : "translateX(0)",
+      indexHint: c.index ? "Google may list this page in search results." : "Hidden from search results — use while testing.",
+      toggleIndex: () => this.set({ index: !c.index }),
+
+      pickFi: () => this.set({ lang: "fi" }), pickEn: () => this.set({ lang: "en" }),
+      fiFg: f.fg, fiBg: f.bg, fiSh: f.sh, enFg: e.fg, enBg: e.bg, enSh: e.sh,
+
+      title, desc,
+      onTitle: (ev) => this.set(fi ? { titleFi: ev.target.value } : { titleEn: ev.target.value }),
+      onDesc: (ev) => this.set(fi ? { descFi: ev.target.value } : { descEn: ev.target.value }),
+      titleCnt: title.length, descCnt: desc.length,
+      titleCntFg: title.length > 60 ? "#B03216" : "#8A98A2",
+      descCntFg: desc.length > 160 ? "#B03216" : "#8A98A2",
+
+      ogImg: c.ogImg, onOgImg: (ev) => this.set({ ogImg: ev.target.value }),
+      prevBg: c.ogImg ? "repeating-linear-gradient(135deg,#E7EEF2 0 10px,#DDE7EC 10px 20px)" : "#EEF2F4",
+      prevNote: c.ogImg ? "share image" : "no image set",
+      siteUrl: "laskuri.pnix.fi",
+
+      aw: c.aw, ga: c.ga, fb: c.fb, label: c.label, extra: c.extra,
+      onAw: (ev) => this.set({ aw: ev.target.value.trim() }),
+      onGa: (ev) => this.set({ ga: ev.target.value.trim() }),
+      onFb: (ev) => this.set({ fb: ev.target.value.trim() }),
+      onLabel: (ev) => this.set({ label: ev.target.value.trim() }),
+      onExtra: (ev) => this.set({ extra: ev.target.value }),
+
+      snippet: this.buildSnippet(),
+      copyLbl: s.copied ? "Copied" : "Copy code",
+      copy: () => {
+        const txt = this.buildSnippet();
+        const done = () => { this.setState({ copied: true }); setTimeout(() => this.setState({ copied: false }), 1600); };
+        try {
+          if (navigator.clipboard) navigator.clipboard.writeText(txt).then(done, done);
+          else done();
+        } catch (err) { done(); }
+      },
+
+      save: () => {
+        try { localStorage.setItem(KEY, JSON.stringify(c)); } catch (err) {}
+        this.setState({ dirty: false });
+        this.flash("Settings saved");
+      },
+      reset: () => { this.setState({ cfg: Object.assign({}, DEFAULTS), dirty: true }); this.flash("Reset to defaults"); },
+      // ---- shop pricing ----
+      shops: SHOP_IDS.map((sh) => {
+        const row = (s.cfg.shops || {})[sh.id] || {};
+        const filled = row.door && row.carry;
+        const put = (k) => (ev) => {
+          const next = Object.assign({}, s.cfg.shops || {});
+          next[sh.id] = Object.assign({}, next[sh.id] || {}, { [k]: ev.target.value.replace(/[^0-9.]/g, "") });
+          this.set({ shops: next });
+        };
+        return {
+          name: sh.name, door: row.door || "", carry: row.carry || "", incl: row.incl || "", per: row.per || "",
+          onDoor: put("door"), onCarry: put("carry"), onIncl: put("incl"), onPer: put("per"),
+          state: sh.id === "ikea" ? "Live" : filled ? "Ready" : "Off",
+          tagBg: sh.id === "ikea" ? "rgba(15,168,95,.12)" : filled ? "rgba(0,204,255,.16)" : "rgba(10,22,32,.07)",
+          tagFg: sh.id === "ikea" ? "#0B7C46" : filled ? "#0089B8" : "#8A98A2",
+          bg: filled || sh.id === "ikea" ? "#FFFFFF" : "#F7F9FA",
+          brd: filled || sh.id === "ikea" ? "rgba(0,204,255,.28)" : "rgba(10,22,32,.07)",
+        };
+      }),
+      copyShopsLbl: s.copiedShops ? "Copied" : "Copy registry",
+      copyShops: () => {
+        const rows = SHOP_IDS.map((sh) => {
+          const r = (s.cfg.shops || {})[sh.id] || {};
+          const on = sh.id === "ikea" || (r.door && r.carry);
+          return "  " + sh.id + ": { door: " + (r.door || 40) + ", carry: " + (r.carry || 50)
+            + ", inclKm: " + (r.incl || 18) + ", perKm: " + (r.per || 1) + ", ready: " + (on ? "true" : "false") + " },";
+        });
+        this.grab("// PNIX shop pricing\n{\n" + rows.join("\n") + "\n}", "copiedShops");
+      },
+
+      savedNote: s.dirty ? "Unsaved changes" : "All changes saved",
+      toast: s.toast,
+
+      // ---- blog ----
+      tabSeo: s.tab === "seo", tabBlog: s.tab === "blog",
+      goSeo: () => this.setState({ tab: "seo" }), goBlog: () => this.setState({ tab: "blog" }),
+      seoFg: t0.fg, seoBg: t0.bg, seoSh: t0.sh, blogFg: t1.fg, blogBg: t1.bg, blogSh: t1.sh,
+      postCount: s.posts.length,
+      noPosts: s.posts.length === 0,
+      posts: s.posts.map((p) => ({
+        title: p.title || "Untitled", slug: p.slug || "untitled", words: this.words(p.body),
+        status: p.status === "live" ? "Published" : "Draft",
+        tagBg: p.status === "live" ? "rgba(15,168,95,.12)" : "rgba(10,22,32,.07)",
+        tagFg: p.status === "live" ? "#0B7C46" : "#5A6B76",
+        bg: p.id === s.cur ? "rgba(0,204,255,.07)" : "#F7F9FA",
+        brd: p.id === s.cur ? "rgba(0,204,255,.34)" : "rgba(10,22,32,.07)",
+        open: () => this.setState({ cur: p.id }),
+        remove: () => this.setState((x) => ({ posts: x.posts.filter((q) => q.id !== p.id), cur: x.cur === p.id ? null : x.cur, blogDirty: true })),
+      })),
+      newPost: () => {
+        const id = "p" + Date.now();
+        const blank = { id, title: "", slug: "", lang: c.lang, excerpt: "", body: "", faq: "", status: "draft", date: new Date().toISOString().slice(0, 10) };
+        this.setState((x) => ({ posts: [blank].concat(x.posts), cur: id, blogDirty: true }));
+      },
+
+      editing: !!cur,
+      pTitle: cur ? cur.title : "", pSlug: cur ? cur.slug : "", pExcerpt: cur ? cur.excerpt : "",
+      pBody: cur ? cur.body : "", pFaq: cur ? cur.faq : "",
+      onPTitle: (ev) => {
+        const v = ev.target.value;
+        const auto = !cur.slug || cur.slug === this.slugify(cur.title);
+        this.setPost(auto ? { title: v, slug: this.slugify(v) } : { title: v });
+      },
+      onPSlug: (ev) => this.setPost({ slug: this.slugify(ev.target.value) }),
+      onPExcerpt: (ev) => this.setPost({ excerpt: ev.target.value }),
+      onPBody: (ev) => this.setPost({ body: ev.target.value }),
+      onPFaq: (ev) => this.setPost({ faq: ev.target.value }),
+      pTitleCnt: cur ? cur.title.length : 0,
+      pTitleFg: cur && cur.title.length > 60 ? "#B03216" : "#8A98A2",
+      pExCnt: cur ? cur.excerpt.length : 0,
+      pExFg: cur && cur.excerpt.length > 160 ? "#B03216" : "#8A98A2",
+      pWords: wc, pRead: Math.max(1, Math.round(wc / 200)),
+      pFile: cur ? (cur.slug || "untitled") + ".html" : "",
+
+      setDraft: () => this.setPost({ status: "draft" }), setLive: () => this.setPost({ status: "live" }),
+      draftFg: d0.fg, draftBg: d0.bg, draftSh: d0.sh, liveFg: d1.fg, liveBg: d1.bg, liveSh: d1.sh,
+      pFi: () => this.setPost({ lang: "fi" }), pEn: () => this.setPost({ lang: "en" }),
+      pFiFg: l0.fg, pFiBg: l0.bg, pFiSh: l0.sh, pEnFg: l1.fg, pEnBg: l1.bg, pEnSh: l1.sh,
+
+      postHtml: this.postHtml(cur),
+      copyPostLbl: s.copiedPost ? "Copied" : "Copy page",
+      copyPost: () => this.grab(this.postHtml(cur), "copiedPost"),
+      sitemapLbl: s.copiedMap ? "Sitemap copied" : "Copy sitemap",
+      copySitemap: () => {
+        const live = s.posts.filter((p) => p.status === "live" && p.slug);
+        const urls = [SITE + "/"].concat(live.map((p) => SITE + "/blog/" + p.slug));
+        const xml = '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n'
+          + urls.map((u) => "  <url><loc>" + u + "</loc></url>").join("\n") + "\n</urlset>";
+        this.grab(xml, "copiedMap");
+      },
+      savePosts: () => {
+        try { localStorage.setItem(BKEY, JSON.stringify(s.posts)); } catch (err) {}
+        this.setState({ blogDirty: false });
+        this.flash("Posts saved");
+      },
+      blogNote: s.blogDirty ? "Unsaved changes" : "All changes saved",
+      publishAll: () => {
+        try { localStorage.setItem(BKEY, JSON.stringify(s.posts)); } catch (err) {}
+        const n = this.exportAll(s.posts);
+        this.setState({ blogDirty: false });
+        this.flash(n > 3 ? "Downloading " + n + " files" : "Nothing published yet — mark a post as Published");
+      },
+
+      // ---- AI crawler files ----
+      pickIndex: () => this.setState({ crawl: "index" }),
+      pickLlms: () => this.setState({ crawl: "llms" }), pickBots: () => this.setState({ crawl: "bots" }),
+      idxFg: x2.fg, idxBg: x2.bg, idxSh: x2.sh,
+      llmsFg: x0.fg, llmsBg: x0.bg, llmsSh: x0.sh, botsFg: x1.fg, botsBg: x1.bg, botsSh: x1.sh,
+      crawlTxt: crawlBody,
+      crawlNote: s.crawl === "bots" ? "Save as /robots.txt"
+        : s.crawl === "index" ? "Save as /blog/index.html (Finnish)" : "Save as /llms.txt",
+      copyCrawlLbl: s.copiedCrawl ? "Copied" : "Copy file",
+      copyCrawl: () => this.grab(crawlBody, "copiedCrawl"),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

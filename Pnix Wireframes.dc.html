@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#F2F4F5; font-family:Inter,system-ui,-apple-system,sans-serif; color:#1A2228; -webkit-font-smoothing:antialiased; }
+  a { color:#1A2228; }
+  a:hover { color:#000000; }
+</style>
+</helmet>
+
+<div style="max-width:1080px;margin:0 auto;padding:36px 20px 72px;display:flex;flex-direction:column;gap:44px">
+
+  <div>
+    <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:#8A949B;margin-bottom:9px">PNIX · wireframes</div>
+    <h1 style="margin:0 0 8px;font-size:30px;line-height:1.2;font-weight:700;letter-spacing:-.03em;text-wrap:pretty">Where the product actually stands</h1>
+    <p style="margin:0;font-size:15px;line-height:1.6;color:#5A666E;max-width:56ch">Three views of the same thing: what pages exist, how a customer moves through them, and what each screen holds. Grey means built, dashed means not yet.</p>
+  </div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="3">
+      <button onClick="{{ t.go }}" style="min-height:42px;padding:0 18px;font-family:'Space Mono',monospace;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:{{ t.fg }};background:{{ t.bg }};border:1px solid {{ t.brd }};border-radius:999px;cursor:pointer;transition:background .2s ease,color .2s ease">{{ t.label }}</button>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ isMap }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;flex-direction:column;gap:26px">
+
+      <div style="padding:22px 20px;background:#FFFFFF;border:1px solid #DCE2E6;border-radius:4px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#8A949B;margin-bottom:16px">01 · Public — laskuri.pnix.fi</div>
+
+        <div style="display:flex;flex-direction:column;gap:14px">
+          <div style="padding:16px 16px;background:#EDF0F2;border:1px solid #C9D1D6;border-radius:3px">
+            <div style="font-size:15px;font-weight:700;letter-spacing:-.01em">Calculator — one page, many faces</div>
+            <div style="font-family:'Space Mono',monospace;font-size:11px;color:#5A666E;margin-top:4px">/ &nbsp;·&nbsp; /?lang=en &nbsp;·&nbsp; /?shop=… &nbsp;·&nbsp; /?kw=…</div>
+            <div style="font-size:13px;line-height:1.55;color:#5A666E;margin-top:8px">Same file. The query string decides language, shop and headline. That is why the ad URL stays clean.</div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px">
+            <sc-for list="{{ shops }}" as="s" hint-placeholder-count="8">
+              <div style="padding:12px 13px;background:#FFFFFF;border:1px {{ s.style }} {{ s.brd }};border-radius:3px">
+                <div style="font-size:13px;font-weight:600;color:{{ s.fg }}">{{ s.name }}</div>
+                <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A949B;margin-top:3px">{{ s.url }}</div>
+                <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:{{ s.tagFg }};margin-top:7px">{{ s.state }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:22px 20px;background:#FFFFFF;border:1px solid #DCE2E6;border-radius:4px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#8A949B;margin-bottom:16px">02 · Content</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px">
+          <sc-for list="{{ content }}" as="c" hint-placeholder-count="4">
+            <div style="padding:14px 14px;background:#FFFFFF;border:1px {{ c.style }} {{ c.brd }};border-radius:3px">
+              <div style="font-size:13.5px;font-weight:600;color:{{ c.fg }}">{{ c.name }}</div>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;color:#8A949B;margin-top:3px">{{ c.url }}</div>
+              <div style="font-size:12px;line-height:1.5;color:#5A666E;margin-top:7px">{{ c.note }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="padding:22px 20px;background:#FFFFFF;border:1px solid #DCE2E6;border-radius:4px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#8A949B;margin-bottom:16px">03 · Private</div>
+        <div style="padding:16px;background:#EDF0F2;border:1px solid #C9D1D6;border-radius:3px">
+          <div style="font-size:15px;font-weight:700;letter-spacing:-.01em">Admin — password gate</div>
+          <div style="font-size:13px;line-height:1.55;color:#5A666E;margin-top:8px">SEO &amp; tracking · shop pricing · blog editor · crawler files. Generates files; does not deploy them.</div>
+        </div>
+      </div>
+
+      <div style="padding:18px 20px;background:#FFFFFF;border:1px dashed #B6C0C6;border-radius:4px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.18em;text-transform:uppercase;color:#8A949B;margin-bottom:12px">Missing</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <sc-for list="{{ gaps }}" as="g" hint-placeholder-count="4">
+            <span style="padding:7px 13px;font-size:12.5px;color:#5A666E;background:#F2F4F5;border:1px dashed #B6C0C6;border-radius:3px">{{ g.label }}</span>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isFlow }}" hint-placeholder-val="{{ false }}">
+    <div style="display:flex;flex-direction:column;gap:12px">
+      <sc-for list="{{ steps }}" as="st" hint-placeholder-count="7">
+        <div style="display:flex;gap:14px;align-items:stretch">
+          <div style="flex-shrink:0;width:44px;display:flex;flex-direction:column;align-items:center">
+            <div style="width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:11px;font-weight:700;color:#5A666E;background:#FFFFFF;border:1px solid #C9D1D6;border-radius:50%">{{ st.n }}</div>
+            <div style="flex:1;width:1px;background:{{ st.rail }};margin-top:4px"></div>
+          </div>
+          <div style="flex:1;min-width:0;padding:16px 18px;margin-bottom:4px;background:#FFFFFF;border:1px solid #DCE2E6;border-left:3px solid {{ st.accent }};border-radius:3px">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap">
+              <div style="font-size:15px;font-weight:600;letter-spacing:-.01em">{{ st.title }}</div>
+              <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:#8A949B">{{ st.where }}</div>
+            </div>
+            <p style="margin:7px 0 0;font-size:13px;line-height:1.55;color:#5A666E">{{ st.body }}</p>
+            <sc-if value="{{ st.risk }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:9px 0 0;padding:9px 11px;font-size:12.5px;line-height:1.5;color:#5A666E;background:#F2F4F5;border-left:2px solid #8A949B">Drop-off risk — {{ st.risk }}</p>
+            </sc-if>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isScreens }}" hint-placeholder-val="{{ false }}">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px">
+
+      <div style="padding:16px;background:#FFFFFF;border:1px solid #DCE2E6;border-radius:4px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8A949B;margin-bottom:12px">Calculator · mobile</div>
+        <div style="display:flex;flex-direction:column;gap:7px;padding:12px;background:#F7F8F9;border:1px solid #DCE2E6;border-radius:3px">
+          <div style="display:flex;justify-content:space-between;align-items:center;padding:9px 10px;background:#FFFFFF;border:1px solid #C9D1D6">
+            <div style="width:26px;height:8px;background:#C9D1D6"></div>
+            <div style="width:36px;height:8px;background:#E3E8EA"></div>
+          </div>
+          <div style="padding:14px 10px 16px;background:#FFFFFF;border:1px solid #C9D1D6">
+            <div style="width:46%;height:7px;background:#E3E8EA;margin-bottom:9px"></div>
+            <div style="width:92%;height:12px;background:#C9D1D6;margin-bottom:5px"></div>
+            <div style="width:74%;height:12px;background:#C9D1D6;margin-bottom:9px"></div>
+            <div style="width:64%;height:7px;background:#E3E8EA"></div>
+            <div style="height:34px;margin-top:12px;background:repeating-linear-gradient(135deg,#EDF0F2 0 6px,#F7F8F9 6px 12px);border:1px dashed #C9D1D6"></div>
+          </div>
+          <sc-for list="{{ mobileSteps }}" as="m" hint-placeholder-count="4">
+            <div style="padding:10px;background:#FFFFFF;border:1px solid #C9D1D6">
+              <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.14em;color:#8A949B">{{ m.n }} · {{ m.label }}</div>
+              <div style="height:{{ m.h }};margin-top:7px;background:{{ m.fill }};border:1px solid #DCE2E6"></div>
+            </div>
+          </sc-for>
+          <div style="height:42px;background:#C9D1D6;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5A666E">WHATSAPP CTA</div>
+          <div style="height:8px;width:60%;margin:0 auto;background:#E3E8EA"></div>
+        </div>
+      </div>
+
+      <div style="padding:16px;background:#FFFFFF;border:1px solid #DCE2E6;border-radius:4px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8A949B;margin-bottom:12px">Quote popup</div>
+        <div style="display:flex;flex-direction:column;gap:7px;padding:12px;background:#5A666E;border-radius:3px">
+          <div style="display:flex;flex-direction:column;gap:7px;padding:10px;background:#FFFFFF;border-radius:3px">
+            <div style="display:flex;justify-content:space-between;align-items:center">
+              <div style="width:40%;height:8px;background:#E3E8EA"></div>
+              <div style="width:18px;height:18px;border:1px solid #C9D1D6;border-radius:50%"></div>
+            </div>
+            <div style="height:96px;background:repeating-linear-gradient(135deg,#EDF0F2 0 7px,#F7F8F9 7px 14px);border:1px solid #C9D1D6;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.14em;color:#8A949B">3D ROUTE MAP</div>
+            <div style="padding:9px;background:#F7F8F9;border:1px solid #DCE2E6">
+              <div style="width:70%;height:7px;background:#E3E8EA;margin-bottom:6px"></div>
+              <div style="width:50%;height:7px;background:#E3E8EA"></div>
+            </div>
+            <div style="padding:11px;background:#EDF0F2;border:1px solid #C9D1D6">
+              <div style="width:34%;height:6px;background:#C9D1D6;margin-bottom:8px"></div>
+              <div style="width:52%;height:18px;background:#8A949B"></div>
+            </div>
+            <div style="height:40px;background:#C9D1D6;display:flex;align-items:center;justify-content:center;font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.14em;color:#5A666E">BOOK ON WHATSAPP</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="padding:16px;background:#FFFFFF;border:1px solid #DCE2E6;border-radius:4px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8A949B;margin-bottom:12px">Blog front page</div>
+        <div style="display:flex;flex-direction:column;gap:7px;padding:12px;background:#F7F8F9;border:1px solid #DCE2E6;border-radius:3px">
+          <div style="display:flex;justify-content:space-between;padding-bottom:9px;border-bottom:1px solid #DCE2E6">
+            <div style="width:30px;height:8px;background:#C9D1D6"></div>
+            <div style="width:48px;height:8px;background:#E3E8EA"></div>
+          </div>
+          <div style="width:78%;height:14px;background:#C9D1D6;margin-top:6px"></div>
+          <div style="width:88%;height:7px;background:#E3E8EA"></div>
+          <sc-for list="{{ blogRows }}" as="b" hint-placeholder-count="3">
+            <div style="padding:11px 0;border-top:1px solid #DCE2E6">
+              <div style="width:{{ b.w }};height:10px;background:#C9D1D6;margin-bottom:6px"></div>
+              <div style="width:94%;height:6px;background:#E3E8EA;margin-bottom:4px"></div>
+              <div style="width:40%;height:6px;background:#E3E8EA"></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="padding:16px;background:#FFFFFF;border:1px solid #DCE2E6;border-radius:4px">
+        <div style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.16em;text-transform:uppercase;color:#8A949B;margin-bottom:12px">Admin</div>
+        <div style="display:flex;flex-direction:column;gap:7px;padding:12px;background:#F7F8F9;border:1px solid #DCE2E6;border-radius:3px">
+          <div style="display:flex;gap:5px">
+            <div style="flex:1;height:26px;background:#C9D1D6"></div>
+            <div style="flex:1;height:26px;background:#E3E8EA"></div>
+          </div>
+          <sc-for list="{{ adminRows }}" as="a" hint-placeholder-count="4">
+            <div style="padding:10px;background:#FFFFFF;border:1px solid #C9D1D6">
+              <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.14em;color:#8A949B">{{ a.label }}</div>
+              <div style="height:{{ a.h }};margin-top:7px;background:#F7F8F9;border:1px solid #DCE2E6"></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1080,&quot;height&quot;:1200}}">
+const SHOPS = [
+  { name: "IKEA", url: "/", live: true },
+  { name: "JYSK", url: "/?shop=jysk" },
+  { name: "Bauhaus", url: "/?shop=bauhaus" },
+  { name: "K-Rauta", url: "/?shop=krauta" },
+  { name: "Puuilo", url: "/?shop=puuilo" },
+  { name: "Sotka", url: "/?shop=sotka" },
+  { name: "Masku", url: "/?shop=masku" },
+  { name: "Tori / second-hand", url: "/?shop=tori" },
+];
+
+const CONTENT = [
+  { name: "Blog front page", url: "/blog/", built: true, note: "Lists published posts. Generated from the admin." },
+  { name: "Blog post", url: "/blog/<slug>", built: true, note: "FAQ + BlogPosting schema travels with each one." },
+  { name: "llms.txt", url: "/llms.txt", built: true, note: "What AI assistants read to describe you." },
+  { name: "robots.txt + sitemap", url: "/robots.txt", built: true, note: "Crawler permissions and the URL list." },
+];
+
+const GAPS = ["Privacy policy", "Cookie consent", "Thank-you state", "Month-end pricing", "Above-2nd-floor disclosure", "GitHub publishing"];
+
+const STEPS = [
+  { title: "Google search", where: "Ad", body: "Two ad groups, Finnish and English. Both point at the bare domain; language and keyword ride in the tracking template.", risk: "" },
+  { title: "Lands on the calculator", where: "Hero", body: "Headline echoes the searched keyword. Price pill and the road animation say what this is inside a second.", risk: "no price visible yet, so a slow read leaves" },
+  { title: "Picks the pickup point", where: "Step 01", body: "IKEA shows branch chips. Every other shop asks for the pickup address and geocodes it.", risk: "" },
+  { title: "Types the delivery address", where: "Step 02", body: "Live geocoding against Finnish addresses, with a typed-address fallback on blur and Enter.", risk: "geocoder silence — mitigated, but still the weakest link" },
+  { title: "Chooses carry-in or doorstep", where: "Step 03", body: "This is what opens the quote. Price and distance land together.", risk: "" },
+  { title: "Quote popup", where: "Popup", body: "Route flies on the 3D map while the price counts up. One green button underneath.", risk: "animation competing with the CTA for attention" },
+  { title: "Taps through to WhatsApp", where: "Handoff", body: "Prefilled message with pickup, destination, service, distance and price. SMS fallback for anyone without WhatsApp.", risk: "no confirmation state — the page just sits there afterwards" },
+];
+
+class Component extends DCLogic {
+  state = { tab: "map" };
+
+  renderVals() {
+    const s = this.state;
+    const chip = (on) => ({
+      fg: on ? "#FFFFFF" : "#5A666E",
+      bg: on ? "#1A2228" : "#FFFFFF",
+      brd: on ? "#1A2228" : "#C9D1D6",
+    });
+    const tab = (id, label) => Object.assign({ label, go: () => this.setState({ tab: id }) }, chip(s.tab === id));
+
+    return {
+      tabs: [tab("map", "Site map"), tab("flow", "Customer flow"), tab("screens", "Screens")],
+      isMap: s.tab === "map", isFlow: s.tab === "flow", isScreens: s.tab === "screens",
+
+      shops: SHOPS.map((x) => ({
+        name: x.name, url: x.url,
+        state: x.live ? "Live" : "Needs pricing",
+        style: x.live ? "solid" : "dashed",
+        brd: x.live ? "#C9D1D6" : "#B6C0C6",
+        fg: x.live ? "#1A2228" : "#5A666E",
+        tagFg: x.live ? "#1A2228" : "#8A949B",
+      })),
+      content: CONTENT.map((c) => ({
+        name: c.name, url: c.url, note: c.note,
+        style: c.built ? "solid" : "dashed",
+        brd: c.built ? "#C9D1D6" : "#B6C0C6",
+        fg: c.built ? "#1A2228" : "#5A666E",
+      })),
+      gaps: GAPS.map((g) => ({ label: g })),
+
+      steps: STEPS.map((st, i) => ({
+        n: String(i + 1).padStart(2, "0"),
+        title: st.title, where: st.where, body: st.body, risk: st.risk,
+        accent: st.risk ? "#8A949B" : "#C9D1D6",
+        rail: i === STEPS.length - 1 ? "transparent" : "#DCE2E6",
+      })),
+
+      mobileSteps: [
+        { n: "01", label: "Pickup point", h: "26px", fill: "#EDF0F2" },
+        { n: "02", label: "Delivery address", h: "34px", fill: "#F7F8F9" },
+        { n: "03", label: "Carry-in or doorstep", h: "26px", fill: "#EDF0F2" },
+        { n: "04", label: "Name and items", h: "34px", fill: "#F7F8F9" },
+      ],
+      blogRows: [{ w: "82%" }, { w: "68%" }, { w: "76%" }],
+      adminRows: [
+        { label: "SEO fields", h: "30px" },
+        { label: "Shop pricing table", h: "44px" },
+        { label: "Tracking IDs", h: "30px" },
+        { label: "Generated code", h: "38px" },
+      ],
+    };
+  }
+}
+
+</script>
+</body>
+</html>

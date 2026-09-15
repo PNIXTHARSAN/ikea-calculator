@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<title>Tietosuojaseloste — PNIX</title>
+<meta name="description" content="Miten PNIX käsittelee henkilötietoja kuljetuspalvelussa ja hintalaskurissa." />
+<meta name="robots" content="index,follow" />
+<link rel="canonical" href="https://pnix.fi/tietosuoja" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+  * { box-sizing: border-box; }
+  body { margin:0; background:#FFFFFF; color:#0A1620; font-family:Inter,system-ui,-apple-system,sans-serif; -webkit-font-smoothing:antialiased; }
+  a { color:#0089B8; }
+  a:hover { color:#00679A; }
+</style>
+</helmet>
+
+<div style="max-width:680px;margin:0 auto;padding:0 20px 64px">
+
+  <header style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 0;border-bottom:1px solid rgba(10,22,32,.1)">
+    <a href="https://pnix.fi/" style="display:flex;align-items:center;gap:9px;text-decoration:none;color:inherit">
+      <img src="pnix-logo.png" alt="PNIX" width="26" height="26" style="border-radius:6px;display:block" />
+      <span style="font-size:15px;font-weight:700;letter-spacing:-.02em">PNIX</span>
+    </a>
+    <div style="display:flex;gap:4px;padding:3px;background:#F4F7F9;border-radius:999px">
+      <button onClick="{{ setFi }}" style="min-height:32px;padding:0 12px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:{{ fiFg }};background:{{ fiBg }};border:none;border-radius:999px;cursor:pointer">FI</button>
+      <button onClick="{{ setEn }}" style="min-height:32px;padding:0 12px;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:{{ enFg }};background:{{ enBg }};border:none;border-radius:999px;cursor:pointer">EN</button>
+    </div>
+  </header>
+
+  <h1 style="margin:34px 0 8px;font-size:30px;line-height:1.2;font-weight:700;letter-spacing:-.035em;text-wrap:pretty">{{ t.h1 }}</h1>
+  <p style="margin:0 0 6px;font-size:15px;line-height:1.6;color:#5A6B76;max-width:52ch">{{ t.lede }}</p>
+  <p style="margin:0 0 34px;font-family:'Space Mono',monospace;font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;color:#8A98A2">{{ t.updated }}</p>
+
+  <sc-for list="{{ sections }}" as="s" hint-placeholder-count="8">
+    <section style="padding:22px 0;border-top:1px solid rgba(10,22,32,.1)">
+      <h2 style="margin:0 0 10px;font-size:17px;font-weight:700;letter-spacing:-.02em">{{ s.h }}</h2>
+      <sc-for list="{{ s.paras }}" as="p" hint-placeholder-count="2">
+        <p style="margin:0 0 10px;font-size:14.5px;line-height:1.65;color:#3A4952;max-width:58ch">{{ p.text }}</p>
+      </sc-for>
+      <sc-if value="{{ s.hasList }}" hint-placeholder-val="{{ false }}">
+        <ul style="margin:8px 0 0;padding-left:20px">
+          <sc-for list="{{ s.items }}" as="li" hint-placeholder-count="3">
+            <li style="margin:0 0 7px;font-size:14.5px;line-height:1.6;color:#3A4952;max-width:56ch">{{ li.text }}</li>
+          </sc-for>
+        </ul>
+      </sc-if>
+    </section>
+  </sc-for>
+
+  <div style="margin-top:30px;padding:20px;background:#F4F7F9;border-radius:16px">
+    <h2 style="margin:0 0 8px;font-size:15px;font-weight:700;letter-spacing:-.01em">{{ t.contactH }}</h2>
+    <p style="margin:0 0 4px;font-size:14px;line-height:1.6;color:#3A4952">PNIX · Y-tunnus 3436982-6</p>
+    <p style="margin:0;font-size:14px;line-height:1.6;color:#3A4952"><a href="https://wa.me/358442490064">WhatsApp +358 44 249 0064</a></p>
+  </div>
+
+  <footer style="margin-top:34px;padding-top:18px;border-top:1px solid rgba(10,22,32,.1);font-size:11.5px;line-height:1.6;color:#8A98A2">
+    <p style="margin:0">{{ t.disclaimer }}</p>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:760,&quot;height&quot;:1100}}">
+const T = {
+  fi: {
+    h1: "Tietosuojaseloste",
+    lede: "Tämä seloste kertoo, mitä tietoja keräämme hintalaskurissa ja kuljetuspalvelussa, ja mihin niitä käytetään.",
+    updated: "Päivitetty 12.9.2026",
+    contactH: "Rekisterinpitäjä",
+    disclaimer: "PNIX on itsenäinen kuljetuspalvelu. Emme ole IKEA:n omistama tai valtuuttama.",
+    sections: [
+      { h: "Mitä tietoja käsittelemme",
+        paras: ["Hintalaskuri toimii ilman kirjautumista. Käsittelemme vain ne tiedot, jotka itse annat laskuriin tai lähetät meille WhatsAppissa:"],
+        items: ["Nouto- ja toimitusosoite", "Nimi ja noudettavat tavarat", "Kerros ja hissitieto, jos valitset kantoavun", "IKEA-tilausnumero, jos annat sen", "Puhelinnumero, kun otat yhteyttä WhatsAppissa tai tekstiviestillä"] },
+      { h: "Mihin tietoja käytetään",
+        paras: ["Osoitteita käytetään ajomatkan ja hinnan laskemiseen sekä kuljetuksen toteuttamiseen. Muut tiedot tarvitaan varauksen vahvistamiseen ja työn suorittamiseen.", "Emme myy tietoja emmekä käytä niitä muuhun kuin kuljetuspalvelun hoitamiseen."],
+        items: [] },
+      { h: "Käsittelyn oikeusperuste",
+        paras: ["Sopimuksen valmistelu ja täytäntöönpano (GDPR 6.1 b) varauksen osalta. Analytiikka- ja markkinointievästeet perustuvat suostumukseesi (GDPR 6.1 a), jonka voit perua milloin tahansa."],
+        items: [] },
+      { h: "Osoitehaku ja reititys",
+        paras: ["Kun kirjoitat osoitteen, haku lähetetään avoimiin karttapalveluihin osoitteen tunnistamiseksi ja ajoreitin laskemiseksi. Näille palveluille välittyy kirjoittamasi osoite ja koordinaatit, ei nimeäsi tai yhteystietojasi."],
+        items: ["Photon ja Nominatim (OpenStreetMap) — osoitehaku", "OSRM — ajoreitin ja -matkan laskenta", "MapLibre ja CARTO — karttanäkymä"] },
+      { h: "Evästeet",
+        paras: ["Sivusto toimii ilman evästeitä. Selaimen paikallista muistia käytetään vain kielivalinnan ja keskeneräisen laskelman säilyttämiseen.", "Mittaus- ja mainosevästeet ladataan vain, jos annat niihin suostumuksen evästebannerissa."],
+        items: ["Google Analytics — kävijämäärät ja sivupolut", "Google Ads — mainosten tuloksellisuus", "Meta Pixel — mainosten kohdennus"] },
+      { h: "WhatsApp",
+        paras: ["Kun lähetät varauksen WhatsAppissa, viestin välittää Meta Platforms Ireland Ltd. omien ehtojensa mukaisesti. Keskustelut säilytetään puhelimessamme työn hoitamiseksi ja mahdollisten reklamaatioiden käsittelemiseksi."],
+        items: [] },
+      { h: "Säilytysaika",
+        paras: ["Varaustiedot ja viestit säilytetään enintään 24 kuukautta työn valmistumisesta. Kirjanpitoon liittyvät tiedot säilytetään kirjanpitolain edellyttämät kuusi vuotta."],
+        items: [] },
+      { h: "Oikeutesi",
+        paras: ["Sinulla on oikeus tarkastaa sinua koskevat tiedot, pyytää niiden oikaisua tai poistamista, vastustaa käsittelyä ja peruuttaa antamasi suostumus. Pyynnöt voi lähettää WhatsAppilla alla olevaan numeroon.", "Jos katsot, että tietojasi on käsitelty virheellisesti, voit tehdä ilmoituksen tietosuojavaltuutetun toimistolle (tietosuoja.fi)."],
+        items: [] },
+    ],
+  },
+  en: {
+    h1: "Privacy notice",
+    lede: "This notice explains what we collect in the price calculator and the delivery service, and what it is used for.",
+    updated: "Updated 12 September 2026",
+    contactH: "Data controller",
+    disclaimer: "PNIX is an independent delivery service. Not owned or authorised by IKEA.",
+    sections: [
+      { h: "What we process",
+        paras: ["The calculator works without an account. We process only what you enter into it or send us on WhatsApp:"],
+        items: ["Pickup and delivery address", "Your name and the items being collected", "Floor and lift details, if you choose carry-in", "IKEA order number, if you provide one", "Your phone number when you contact us on WhatsApp or by text"] },
+      { h: "What it is used for",
+        paras: ["Addresses are used to calculate the driving distance and price, and to carry out the delivery. The rest is needed to confirm the booking and do the job.", "We do not sell your data or use it for anything beyond running the delivery service."],
+        items: [] },
+      { h: "Legal basis",
+        paras: ["Preparation and performance of a contract (GDPR 6.1 b) for the booking itself. Analytics and advertising cookies rely on your consent (GDPR 6.1 a), which you can withdraw at any time."],
+        items: [] },
+      { h: "Address lookup and routing",
+        paras: ["When you type an address, the query is sent to open mapping services to identify the address and calculate the driving route. Those services receive the address text and coordinates, not your name or contact details."],
+        items: ["Photon and Nominatim (OpenStreetMap) — address lookup", "OSRM — route and distance calculation", "MapLibre and CARTO — map rendering"] },
+      { h: "Cookies",
+        paras: ["The site runs without cookies. Browser local storage is used only to remember your language and an unfinished calculation.", "Measurement and advertising cookies load only if you consent in the cookie banner."],
+        items: ["Google Analytics — visitor numbers and page paths", "Google Ads — advertising performance", "Meta Pixel — advertising targeting"] },
+      { h: "WhatsApp",
+        paras: ["When you send a booking on WhatsApp, the message is carried by Meta Platforms Ireland Ltd. under their own terms. Conversations are kept on our phone to carry out the job and handle any complaints."],
+        items: [] },
+      { h: "Retention",
+        paras: ["Booking details and messages are kept for up to 24 months after the job is completed. Accounting records are kept for the six years required by Finnish accounting law."],
+        items: [] },
+      { h: "Your rights",
+        paras: ["You have the right to access your data, request correction or erasure, object to processing, and withdraw consent. Send requests by WhatsApp to the number below.", "If you believe your data has been handled incorrectly, you can report it to the Finnish Data Protection Ombudsman (tietosuoja.fi)."],
+        items: [] },
+    ],
+  },
+};
+
+class Component extends DCLogic {
+  state = { lang: "fi" };
+
+  componentDidMount() {
+    try {
+      const q = (new URL(location.href).searchParams.get("lang") || "").toLowerCase();
+      if (q === "en" || q === "fi") this.setState({ lang: q });
+    } catch (e) {}
+  }
+
+  pick(v) {
+    if (typeof document !== "undefined" && document.documentElement) document.documentElement.lang = v;
+    this.setState({ lang: v });
+  }
+
+  renderVals() {
+    const s = this.state, t = T[s.lang], fi = s.lang === "fi";
+    const on = (yes) => ({ fg: yes ? "#FFFFFF" : "#5A6B76", bg: yes ? "#0A1620" : "transparent" });
+    const a = on(fi), b = on(!fi);
+    return {
+      t,
+      setFi: () => this.pick("fi"), setEn: () => this.pick("en"),
+      fiFg: a.fg, fiBg: a.bg, enFg: b.fg, enBg: b.bg,
+      sections: t.sections.map((sec) => ({
+        h: sec.h,
+        paras: sec.paras.map((x) => ({ text: x })),
+        hasList: sec.items.length > 0,
+        items: sec.items.map((x) => ({ text: x })),
+      })),
+    };
+  }
+}
+
+</script>
+</body>
+</html>
